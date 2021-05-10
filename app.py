@@ -1,25 +1,43 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout
+from PyQt5.QtCore import Qt, QSize
+"""A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
+to track you work periods, as well as a timer to track your break periods. The length of these periods are editable.
+Once a timer is up, a sound is played to alert the user."""
 
 
-def window():
-    app = QApplication(sys.argv)
-    widget = QWidget()
-    button1 = QPushButton(widget)
-    button1.setText("Button1")
-    button1.move(64, 32)
-    button1.clicked.connect(button1_clicked)
+class MainWindow(QMainWindow):
+    """Provides the main timer, options for break and work timers, and the settings button that opens the settings
+    window."""
+    def __init__(self):
+        """Sets the window's size and title. Places and adds functionality for all primary elements that are needed
+        in the main window."""
+        super().__init__()
+        self.setMinimumSize(QSize(750, 500))
+        self.setWindowTitle("Pomodoro Timer")
 
-    widget.setGeometry(50, 50, 320, 200)
-    widget.setWindowTitle("PyQt5 Button Click Example")
-    widget.show()
-    sys.exit(app.exec_())
+        self.settings_button = QPushButton("Settings", self)
+        self.settings_button.move(635, 10)
+        self.settings_button.clicked.connect(self.settings_button_clicked)
+
+    def settings_button_clicked(self):
+        """Creates the settings window and shows it."""
+        self.sw = SettingsWindow()
+        self.sw.show()
 
 
-def button1_clicked():
-    print("Button 1 clicked")
+class SettingsWindow(QWidget):
+    """Contains the widgets that allow for editing the timer lengths for break and work periods."""
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Another Window")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
 
 
-if __name__ == '__main__':
-    window()
+app = QApplication(sys.argv)
+w = MainWindow()
+app.MainWindow = w
+w.show()
+app.exec_()
