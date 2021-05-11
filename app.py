@@ -16,14 +16,19 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(750, 500))
         self.setWindowTitle("Pomodoro Timer")
 
+        self.sw = SettingsWindow()
+
         self.settings_button = QPushButton("Settings", self)
         self.settings_button.move(635, 10)
         self.settings_button.clicked.connect(self.settings_button_clicked)
 
     def settings_button_clicked(self):
         """Creates the settings window and shows it."""
-        self.sw = SettingsWindow()
         self.sw.show()
+
+    def closeEvent(self, event):
+        """Closes the settings window if it is open upon closing."""
+        self.sw.close()
 
 
 class SettingsWindow(QWidget):
