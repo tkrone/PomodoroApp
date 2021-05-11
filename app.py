@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
 to track you work periods, as well as a timer to track your break periods. The length of these periods are editable.
 Once a timer is up, a sound is played to alert the user."""
@@ -18,13 +18,52 @@ class MainWindow(QMainWindow):
 
         self.sw = SettingsWindow()
 
+        # Timer
+        self.timer = QTimer(self)
+        self.time_label = QLabel(self)
+        self.time_label.move(300, 150)
+        self.timer.timeout.connect(self.show_time)
+
+        self.work_seconds = 900
+        self.current_countdown = 0
+
+        # Settings Button
         self.settings_button = QPushButton("Settings", self)
         self.settings_button.move(635, 10)
         self.settings_button.clicked.connect(self.settings_button_clicked)
 
+        # Work Toggle Button
+        self.work_button = QPushButton("Work", self)
+        self.work_button.move(250,50)
+        self.work_button.clicked.connect(self.work_button_clicked)
+
+        # Break Toggle Button
+        self.break_button = QPushButton("Break", self)
+        self.break_button.move(400,50)
+        self.break_button.clicked.connect(self.break_button_clicked)
+
+        # Start Button
+        self.start_button = QPushButton("Start", self)
+        self.start_button.move(350,450)
+        self.start_button.clicked.connect(self.start_button_clicked)
+
+    def start_button_clicked(self):
+        self.timer.start(1000)
+
+    def show_time(self):
+        m, s = divmod(self.current_countdown, 60)
+        self.time_label.setText(f'{m:02d}:{s:02d}')
+        self.current_countdown -= 1
+
     def settings_button_clicked(self):
         """Creates the settings window and shows it."""
         self.sw.show()
+
+    def work_button_clicked(self):
+        self.current_countdown = self.work_seconds
+
+    def break_button_clicked(self):
+        return
 
     def closeEvent(self, event):
         """Closes the settings window if it is open upon closing."""
