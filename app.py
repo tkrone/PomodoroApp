@@ -1,4 +1,6 @@
 import sys
+
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout
 from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
@@ -15,6 +17,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setMinimumSize(QSize(750, 500))
         self.setWindowTitle("Pomodoro Timer")
+        self.setWindowIcon(QtGui.QIcon('timer_icon.png'))
 
         self.sw = SettingsWindow()
 
@@ -27,6 +30,11 @@ class MainWindow(QMainWindow):
         self.work_seconds = 900
         self.current_countdown = 0
 
+        # Sets label's default value to the default work time
+        m, s = divmod(self.work_seconds, 60)
+        self.time_label.setText(f'{m:02d}:{s:02d}')
+        self.current_countdown = self.work_seconds
+
         # Settings Button
         self.settings_button = QPushButton("Settings", self)
         self.settings_button.move(635, 10)
@@ -34,17 +42,17 @@ class MainWindow(QMainWindow):
 
         # Work Toggle Button
         self.work_button = QPushButton("Work", self)
-        self.work_button.move(250,50)
+        self.work_button.move(250, 50)
         self.work_button.clicked.connect(self.work_button_clicked)
 
         # Break Toggle Button
         self.break_button = QPushButton("Break", self)
-        self.break_button.move(400,50)
+        self.break_button.move(400, 50)
         self.break_button.clicked.connect(self.break_button_clicked)
 
         # Start Button
         self.start_button = QPushButton("Start", self)
-        self.start_button.move(350,450)
+        self.start_button.move(350, 450)
         self.start_button.clicked.connect(self.start_button_clicked)
 
     def start_button_clicked(self):
@@ -60,7 +68,7 @@ class MainWindow(QMainWindow):
         self.sw.show()
 
     def work_button_clicked(self):
-        self.current_countdown = self.work_seconds
+        return
 
     def break_button_clicked(self):
         return
