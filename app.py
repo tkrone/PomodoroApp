@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
         self.start_stop_button.clicked.connect(self.start_stop_button_clicked)
 
     def start_stop_button_clicked(self):
+        """Toggles between start and stop. Stops timer if it's running, starts it if it's not."""
         if self.start_stop_button.text() == "Start":
             self.timer.start(1000)
             self.start_stop_button.setText("Stop")
@@ -66,10 +67,13 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Start")
 
     def show_time(self):
+        """Every second that is passed, decrements current_countdown and updates the time label"""
         self.update_time_label()
         self.current_countdown -= 1
 
     def update_time_label(self):
+        """changes the amount of seconds left on the timer to minutes:seconds format and updates the time
+        label."""
         m, s = divmod(self.current_countdown, 60)
         self.time_label.setText(f'{m:02d}:{s:02d}')
 
@@ -78,6 +82,8 @@ class MainWindow(QMainWindow):
         self.sw.show()
 
     def work_button_clicked(self):
+        """Sets/Resets the second count to the amount of work seconds specified by the settings. Updates the time
+        label. Stops the timer if it was running"""
         if self.timer.isActive():
             self.timer.stop()
             self.start_stop_button.setText("Start")
@@ -85,6 +91,8 @@ class MainWindow(QMainWindow):
         self.update_time_label()
 
     def break_button_clicked(self):
+        """Sets/Resets the second count to the amount of break seconds specified by the settings. Updates the time
+        label. Stops the timer if it was running"""
         if self.timer.isActive():
             self.timer.stop()
             self.start_stop_button.setText("Start")
