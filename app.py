@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider
 from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
 to track you work periods, as well as a timer to track your break periods. The length of these periods are editable.
@@ -108,11 +108,48 @@ class SettingsWindow(QWidget):
     """Contains the widgets that allow for editing the timer lengths for break and work periods."""
     def __init__(self):
         super().__init__()
+
         layout = QVBoxLayout()
-        self.label = QLabel("Another Window")
-        layout.addWidget(self.label)
+
+        self.setMinimumSize(QSize(750, 500))
+        self.setWindowTitle("Pomodoro Timer")
+        self.setWindowIcon(QtGui.QIcon('timer_icon.png'))
+
+        self.work_slider = QSlider(Qt.Horizontal)
+        self.work_slider.setMaximum(60)
+        self.work_slider.setValue(15)
+        self.work_slider.setTickPosition(QSlider.TicksBelow)
+        self.work_slider.setTickInterval(5)
+        self.work_slider.move(10, 10)
+        self.work_slider.valueChanged.connect(self.work_value_change)
+
+        self.work_label = QLabel("Work")
+        self.work_time_label = QLabel(str(self.work_slider.value()))
+
+        self.break_slider = QSlider(Qt.Horizontal)
+        self.break_slider.setMaximum(60)
+        self.break_slider.setValue(5)
+        self.break_slider.setTickPosition(QSlider.TicksBelow)
+        self.break_slider.setTickInterval(5)
+        self.break_slider.move(10, 10)
+        self.break_slider.valueChanged.connect(self.break_value_change)
+
+        self.break_label = QLabel("Break")
+        self.break_time_label = QLabel(str(self.break_slider.value()))
+
+        layout.addWidget(self.work_label)
+        layout.addWidget(self.work_time_label)
+        layout.addWidget(self.work_slider)
+        layout.addWidget(self.break_label)
+        layout.addWidget(self.break_time_label)
+        layout.addWidget(self.break_slider)
         self.setLayout(layout)
 
+    def work_value_change(self):
+        self.work_time_label.setText(str(self.work_slider.value()))
+
+    def break_value_change(self):
+        self.break_time_label.setText(str(self.break_slider.value()))
 
 app = QApplication(sys.argv)
 w = MainWindow()
