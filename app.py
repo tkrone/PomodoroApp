@@ -27,6 +27,8 @@ class MainWindow(QMainWindow):
         self.time_label.move(300, 150)
         self.timer.timeout.connect(self.show_time)
 
+        # Default time settings
+        self.break_seconds = 300
         self.work_seconds = 900
         self.current_countdown = 0
 
@@ -56,7 +58,7 @@ class MainWindow(QMainWindow):
         self.start_stop_button.clicked.connect(self.start_stop_button_clicked)
 
     def start_stop_button_clicked(self):
-        if (self.start_stop_button.text() == "Start"):
+        if self.start_stop_button.text() == "Start":
             self.timer.start(1000)
             self.start_stop_button.setText("Stop")
         else:
@@ -64,19 +66,30 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Start")
 
     def show_time(self):
+        self.update_time_label()
+        self.current_countdown -= 1
+
+    def update_time_label(self):
         m, s = divmod(self.current_countdown, 60)
         self.time_label.setText(f'{m:02d}:{s:02d}')
-        self.current_countdown -= 1
 
     def settings_button_clicked(self):
         """Creates the settings window and shows it."""
         self.sw.show()
 
     def work_button_clicked(self):
-        return
+        if self.timer.isActive():
+            self.timer.stop()
+            self.start_stop_button.setText("Start")
+        self.current_countdown = self.work_seconds
+        self.update_time_label()
 
     def break_button_clicked(self):
-        return
+        if self.timer.isActive():
+            self.timer.stop()
+            self.start_stop_button.setText("Start")
+        self.current_countdown = self.break_seconds
+        self.update_time_label()
 
     def closeEvent(self, event):
         """Closes the settings window if it is open upon closing."""
