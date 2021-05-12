@@ -51,12 +51,17 @@ class MainWindow(QMainWindow):
         self.break_button.clicked.connect(self.break_button_clicked)
 
         # Start Button
-        self.start_button = QPushButton("Start", self)
-        self.start_button.move(350, 450)
-        self.start_button.clicked.connect(self.start_button_clicked)
+        self.start_stop_button = QPushButton("Start", self)
+        self.start_stop_button.move(350, 450)
+        self.start_stop_button.clicked.connect(self.start_stop_button_clicked)
 
-    def start_button_clicked(self):
-        self.timer.start(1000)
+    def start_stop_button_clicked(self):
+        if (self.start_stop_button.text() == "Start"):
+            self.timer.start(1000)
+            self.start_stop_button.setText("Stop")
+        else:
+            self.timer.stop()
+            self.start_stop_button.setText("Start")
 
     def show_time(self):
         m, s = divmod(self.current_countdown, 60)
