@@ -27,7 +27,6 @@ class MainWindow(QMainWindow):
         # Timer
         self.timer = QTimer(self)
         self.time_label = QLabel(self)
-        self.time_label.move(300, 150)
         self.time_label.setFont(QFont('Times', 35))
         self.time_label.setAlignment(Qt.AlignCenter)
         self.time_label.setStyleSheet("background-color: Bisque; "
@@ -46,22 +45,18 @@ class MainWindow(QMainWindow):
 
         # Settings Button
         self.settings_button = QPushButton("Settings", self)
-        self.settings_button.move(635, 10)
         self.settings_button.clicked.connect(self.settings_button_clicked)
 
         # Work Toggle Button
         self.work_button = QPushButton("Work", self)
-        self.work_button.move(250, 50)
         self.work_button.clicked.connect(self.work_button_clicked)
 
         # Break Toggle Button
         self.break_button = QPushButton("Break", self)
-        self.break_button.move(400, 50)
         self.break_button.clicked.connect(self.break_button_clicked)
 
         # Start Button
         self.start_stop_button = QPushButton("Start", self)
-        self.start_stop_button.move(350, 450)
         self.start_stop_button.clicked.connect(self.start_stop_button_clicked)
 
         layout.addWidget(self.settings_button, 0, 0, 1, 2)
@@ -139,7 +134,6 @@ class SettingsWindow(QWidget):
         self.work_slider.setValue(15)
         self.work_slider.setTickPosition(QSlider.TicksBelow)
         self.work_slider.setTickInterval(5)
-        self.work_slider.move(10, 10)
         self.work_slider.valueChanged.connect(self.work_value_change)
 
         self.work_label = QLabel("Work")
@@ -152,7 +146,6 @@ class SettingsWindow(QWidget):
         self.break_slider.setValue(5)
         self.break_slider.setTickPosition(QSlider.TicksBelow)
         self.break_slider.setTickInterval(5)
-        self.break_slider.move(10, 10)
         self.break_slider.valueChanged.connect(self.break_value_change)
 
         self.break_label = QLabel("Break")
