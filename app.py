@@ -2,7 +2,7 @@ import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider, QGridLayout
 from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
 to track you work periods, as well as a timer to track your break periods. The length of these periods are editable.
@@ -22,12 +22,14 @@ class MainWindow(QMainWindow):
 
         self.sw = SettingsWindow()
 
+        layout = QGridLayout()
+
         # Timer
         self.timer = QTimer(self)
         self.time_label = QLabel(self)
         self.time_label.move(300, 150)
-        self.time_label.setFont(QFont('Times', 20))
-        self.time_label.resize(150, 50)
+        self.time_label.setFont(QFont('Times', 35))
+        self.time_label.setAlignment(Qt.AlignCenter)
         self.time_label.setStyleSheet("background-color: Bisque; "
                                    "border: 1px solid black;")
         self.timer.timeout.connect(self.show_time)
@@ -61,6 +63,17 @@ class MainWindow(QMainWindow):
         self.start_stop_button = QPushButton("Start", self)
         self.start_stop_button.move(350, 450)
         self.start_stop_button.clicked.connect(self.start_stop_button_clicked)
+
+        layout.addWidget(self.settings_button, 0, 0, 1, 2)
+        layout.addWidget(self.work_button, 1, 0)
+        layout.addWidget(self.break_button, 1, 1)
+        layout.addWidget(self.time_label, 2, 0, 1, 2)
+        layout.addWidget(self.start_stop_button, 3, 0, 1, 2)
+
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
 
     def start_stop_button_clicked(self):
         """Toggles between start and stop. Stops timer if it's running, starts it if it's not."""
