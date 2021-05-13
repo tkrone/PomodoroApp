@@ -1,6 +1,7 @@
 import sys
 
 from PyQt5 import QtGui
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider
 from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
@@ -25,6 +26,10 @@ class MainWindow(QMainWindow):
         self.timer = QTimer(self)
         self.time_label = QLabel(self)
         self.time_label.move(300, 150)
+        self.time_label.setFont(QFont('Times', 20))
+        self.time_label.resize(150, 50)
+        self.time_label.setStyleSheet("background-color: Bisque; "
+                                   "border: 1px solid black;")
         self.timer.timeout.connect(self.show_time)
 
         # Default time settings
