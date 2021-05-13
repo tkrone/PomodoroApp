@@ -66,6 +66,7 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.settings_button, 0, 0, 1, 2)
         layout.addWidget(self.work_button, 1, 0)
+
         layout.addWidget(self.break_button, 1, 1)
         layout.addWidget(self.time_label, 2, 0, 1, 2)
         layout.addWidget(self.start_stop_button, 3, 0, 1, 2)
@@ -129,7 +130,7 @@ class SettingsWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        self.setMinimumSize(QSize(750, 500))
+        self.setMinimumSize(QSize(600, 150))
         self.setWindowTitle("Pomodoro Timer")
         self.setWindowIcon(QtGui.QIcon('timer_icon.png'))
 
@@ -142,6 +143,8 @@ class SettingsWindow(QWidget):
         self.work_slider.valueChanged.connect(self.work_value_change)
 
         self.work_label = QLabel("Work")
+        self.work_label.setAlignment(Qt.AlignCenter)
+        self.work_label.setStyleSheet("font-weight: bold;")
         self.work_time_label = QLabel(str(self.work_slider.value()))
 
         self.break_slider = QSlider(Qt.Horizontal)
@@ -153,14 +156,18 @@ class SettingsWindow(QWidget):
         self.break_slider.valueChanged.connect(self.break_value_change)
 
         self.break_label = QLabel("Break")
+        self.break_label.setAlignment(Qt.AlignCenter)
+        self.break_label.setStyleSheet("font-weight: bold;")
         self.break_time_label = QLabel(str(self.break_slider.value()))
 
+        layout.addStretch()
         layout.addWidget(self.work_label)
         layout.addWidget(self.work_time_label)
         layout.addWidget(self.work_slider)
         layout.addWidget(self.break_label)
         layout.addWidget(self.break_time_label)
         layout.addWidget(self.break_slider)
+        layout.setSpacing(0)
         self.setLayout(layout)
 
     def work_value_change(self):
