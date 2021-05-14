@@ -3,7 +3,8 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider, QGridLayout
-from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime
+from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime, pyqtSignal, pyqtSlot
+
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
 to track you work periods, as well as a timer to track your break periods. The length of these periods are editable.
 Once a timer is up, a sound is played to alert the user."""
@@ -19,8 +20,6 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(750, 500))
         self.setWindowTitle("Pomodoro Timer")
         self.setWindowIcon(QtGui.QIcon('timer_icon.png'))
-
-        self.sw = SettingsWindow()
 
         layout = QGridLayout()
 
@@ -93,6 +92,8 @@ class MainWindow(QMainWindow):
 
     def settings_button_clicked(self):
         """Creates the settings window and shows it."""
+        self.sw = SettingsWindow()
+        self.sw.time_change.connect(self.update_time)
         self.sw.show()
 
     def work_button_clicked(self):
@@ -117,9 +118,18 @@ class MainWindow(QMainWindow):
         """Closes the settings window if it is open upon closing."""
         self.sw.close()
 
+    @pyqtSlot(str, str)
+    def update_time(self, work_time, break_time):
+        self.work_seconds = int(work_time) * 60
+        self.break_seconds = int(break_time) * 60
+        self.update_time_label()
+
 
 class SettingsWindow(QWidget):
     """Contains the widgets that allow for editing the timer lengths for break and work periods."""
+
+    time_change = pyqtSignal(str, str)
+
     def __init__(self):
         super().__init__()
 
@@ -153,6 +163,9 @@ class SettingsWindow(QWidget):
         self.break_label.setStyleSheet("font-weight: bold;")
         self.break_time_label = QLabel(str(self.break_slider.value()))
 
+        self.apply_button = QPushButton("Apply", self)
+        self.apply_button.clicked.connect(self.apply_button_clicked)
+
         layout.addStretch()
         layout.addWidget(self.work_label)
         layout.addWidget(self.work_time_label)
@@ -168,6 +181,10 @@ class SettingsWindow(QWidget):
 
     def break_value_change(self):
         self.break_time_label.setText(str(self.break_slider.value()))
+
+    def apply_button_clicked(self):
+        print("emitted")
+        self.time_change.emit(self.work_time_label.text(), self.break_time_label.text())
 
 app = QApplication(sys.argv)
 w = MainWindow()
