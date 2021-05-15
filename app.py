@@ -164,6 +164,7 @@ class SettingsWindow(QWidget):
 
         self.work_slider = QSlider(Qt.Horizontal)
         self.work_slider.setMaximum(60)
+        self.work_slider.setMinimum(1)
         self.work_slider.setValue(15)
         self.work_slider.setTickPosition(QSlider.TicksBelow)
         self.work_slider.setTickInterval(5)
@@ -176,6 +177,7 @@ class SettingsWindow(QWidget):
 
         self.break_slider = QSlider(Qt.Horizontal)
         self.break_slider.setMaximum(60)
+        self.work_slider.setMinimum(1)
         self.break_slider.setValue(5)
         self.break_slider.setTickPosition(QSlider.TicksBelow)
         self.break_slider.setTickInterval(5)
