@@ -35,12 +35,14 @@ class MainWindow(QMainWindow):
         # Default time settings
         self.break_seconds = 300
         self.work_seconds = 900
-        self.current_countdown = 0
 
         # Sets label's default value to the default work time
         m, s = divmod(self.work_seconds, 60)
         self.time_label.setText(f'{m:02d}:{s:02d}')
         self.current_countdown = self.work_seconds
+
+        # "work" represents we or on the work time counter, "break" represents we're on the break time counter
+        self.mode = "work"
 
         # Settings Button
         self.settings_button = QPushButton("Settings", self)
@@ -104,6 +106,7 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Start")
         self.current_countdown = self.work_seconds
         self.update_time_label()
+        mode = "work"
 
     def break_button_clicked(self):
         """Sets/Resets the second count to the amount of break seconds specified by the settings. Updates the time
@@ -113,15 +116,22 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Start")
         self.current_countdown = self.break_seconds
         self.update_time_label()
+        self.mode = "break"
 
     def closeEvent(self, event):
         """Closes the settings window if it is open upon closing."""
         self.sw.close()
 
-    @pyqtSlot(str, str)
     def update_time(self, work_time, break_time):
         self.work_seconds = int(work_time) * 60
         self.break_seconds = int(break_time) * 60
+
+        if self.mode == "work":
+            self.current_countdown = self.work_seconds
+        else:
+            self.current_countdown = self.break_seconds
+        print(self.current_countdown)
+
         self.update_time_label()
 
 
@@ -173,7 +183,8 @@ class SettingsWindow(QWidget):
         layout.addWidget(self.break_label)
         layout.addWidget(self.break_time_label)
         layout.addWidget(self.break_slider)
-        layout.setSpacing(0)
+        layout.addWidget(self.apply_button)
+        layout.setSpacing(5)
         self.setLayout(layout)
 
     def work_value_change(self):
@@ -183,7 +194,6 @@ class SettingsWindow(QWidget):
         self.break_time_label.setText(str(self.break_slider.value()))
 
     def apply_button_clicked(self):
-        print("emitted")
         self.time_change.emit(self.work_time_label.text(), self.break_time_label.text())
 
 app = QApplication(sys.argv)
