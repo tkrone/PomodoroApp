@@ -4,7 +4,7 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QFont
 from PyQt5.QtMultimedia import QSound
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider, QGridLayout
-from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, QSize, QTimer, pyqtSignal
 
 """A desktop application that provides all tools necessary to use the pomodoro technique. These tools include a timer
 to track you work periods, as well as a timer to track your break periods. The length of these periods are editable.
@@ -14,14 +14,17 @@ Once a timer is up, a sound is played to alert the user."""
 class MainWindow(QMainWindow):
     """Provides the main timer, options for break and work timers, and the settings button that opens the settings
     window."""
+
     def __init__(self):
-        """Sets the window's size and title. Places and adds functionality for all primary elements that are needed
+        """Sets the window's size, icon, and title. Places and adds functionality for all primary elements that are needed
         in the main window."""
         super().__init__()
+
         self.setMinimumSize(QSize(750, 500))
         self.setWindowTitle("Pomodoro Timer")
         self.setWindowIcon(QtGui.QIcon('timer_icon.png'))
 
+        # Provides the layout formatting for the main window
         layout = QGridLayout()
 
         # Timer
@@ -30,12 +33,12 @@ class MainWindow(QMainWindow):
         self.time_label.setFont(QFont('Times', 35))
         self.time_label.setAlignment(Qt.AlignCenter)
         self.time_label.setStyleSheet("background-color: Bisque; "
-                                   "border: 1px solid black;")
+                                      "border: 1px solid black;")
         self.timer.timeout.connect(self.show_time)
 
         # Default time settings
         self.break_seconds = 300
-        self.work_seconds = 15
+        self.work_seconds = 900
 
         # Sets label's default value to the default work time
         m, s = divmod(self.work_seconds, 60)
@@ -64,13 +67,14 @@ class MainWindow(QMainWindow):
         self.start_stop_button = QPushButton("Start", self)
         self.start_stop_button.clicked.connect(self.start_stop_button_clicked)
 
+        # Adds buttons and labels to their respective spot on the layout's grid
         layout.addWidget(self.settings_button, 0, 0, 1, 2)
         layout.addWidget(self.work_button, 1, 0)
-
         layout.addWidget(self.break_button, 1, 1)
         layout.addWidget(self.time_label, 2, 0, 1, 2)
         layout.addWidget(self.start_stop_button, 3, 0, 1, 2)
 
+        # Places the layout on the window
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
@@ -78,6 +82,7 @@ class MainWindow(QMainWindow):
     def start_stop_button_clicked(self):
         """Toggles between start and stop. Stops timer if it's running, starts it if it's not."""
         if self.start_stop_button.text() == "Start":
+            # Resets the countdown if the start option is available the the current countdown is 0.
             if self.current_countdown == 0:
                 if self.mode == "work":
                     self.current_countdown = self.work_seconds
@@ -90,7 +95,8 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Start")
 
     def show_time(self):
-        """Every second that is passed, decrements current_countdown and updates the time label"""
+        """Every second that is passed, decrements current_countdown and updates the time label. If the countdown
+        is finished, plays the bell sound."""
         self.update_time_label()
         if self.current_countdown != 0:
             self.current_countdown -= 1
@@ -106,7 +112,8 @@ class MainWindow(QMainWindow):
         self.time_label.setText(f'{m:02d}:{s:02d}')
 
     def settings_button_clicked(self):
-        """Creates the settings window and shows it."""
+        """Creates the settings window and shows it. Also connects the time setting change signal to the main window's
+        update_time function"""
         self.sw = SettingsWindow()
         self.sw.time_change.connect(self.update_time)
         self.sw.show()
@@ -119,7 +126,7 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Start")
         self.current_countdown = self.work_seconds
         self.update_time_label()
-        mode = "work"
+        self.mode = "work"
 
     def break_button_clicked(self):
         """Sets/Resets the second count to the amount of break seconds specified by the settings. Updates the time
@@ -136,6 +143,8 @@ class MainWindow(QMainWindow):
         self.sw.close()
 
     def update_time(self, work_time, break_time):
+        """Recieves the signal from the settings window if the apply button is changed. Updates the work and break
+        second count setting based on the user's settings and updates the countdown label."""
         self.work_seconds = int(work_time) * 60
         self.break_seconds = int(break_time) * 60
 
@@ -143,7 +152,6 @@ class MainWindow(QMainWindow):
             self.current_countdown = self.work_seconds
         else:
             self.current_countdown = self.break_seconds
-        print(self.current_countdown)
 
         self.update_time_label()
 
@@ -210,6 +218,7 @@ class SettingsWindow(QWidget):
 
     def apply_button_clicked(self):
         self.time_change.emit(self.work_time_label.text(), self.break_time_label.text())
+
 
 app = QApplication(sys.argv)
 w = MainWindow()
