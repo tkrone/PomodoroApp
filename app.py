@@ -2,6 +2,7 @@ import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont
+from PyQt5.QtMultimedia import QSound
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QWidget, QVBoxLayout, QSlider, QGridLayout
 from PyQt5.QtCore import Qt, QSize, QTimer, QDateTime, pyqtSignal, pyqtSlot
 
@@ -34,7 +35,7 @@ class MainWindow(QMainWindow):
 
         # Default time settings
         self.break_seconds = 300
-        self.work_seconds = 900
+        self.work_seconds = 15
 
         # Sets label's default value to the default work time
         m, s = divmod(self.work_seconds, 60)
@@ -43,6 +44,9 @@ class MainWindow(QMainWindow):
 
         # "work" represents we or on the work time counter, "break" represents we're on the break time counter
         self.mode = "work"
+
+        # Bell rings when timer is up
+        self.bell = QSound("bell.wav")
 
         # Settings Button
         self.settings_button = QPushButton("Settings", self)
@@ -67,7 +71,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.time_label, 2, 0, 1, 2)
         layout.addWidget(self.start_stop_button, 3, 0, 1, 2)
 
-
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
@@ -75,6 +78,11 @@ class MainWindow(QMainWindow):
     def start_stop_button_clicked(self):
         """Toggles between start and stop. Stops timer if it's running, starts it if it's not."""
         if self.start_stop_button.text() == "Start":
+            if self.current_countdown == 0:
+                if self.mode == "work":
+                    self.current_countdown = self.work_seconds
+                else:
+                    self.current_countdown = self.break_seconds
             self.timer.start(1000)
             self.start_stop_button.setText("Stop")
         else:
@@ -84,7 +92,12 @@ class MainWindow(QMainWindow):
     def show_time(self):
         """Every second that is passed, decrements current_countdown and updates the time label"""
         self.update_time_label()
-        self.current_countdown -= 1
+        if self.current_countdown != 0:
+            self.current_countdown -= 1
+        else:
+            self.bell.play("bell.wav")
+            self.timer.stop()
+            self.start_stop_button.setText("Start")
 
     def update_time_label(self):
         """changes the amount of seconds left on the timer to minutes:seconds format and updates the time
